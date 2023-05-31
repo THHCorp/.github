@@ -1,0 +1,26 @@
+name: 'Ref conventions'
+on:
+  pull_request: {}
+jobs:
+  commit_titles:
+    name: 'Commit title convention'
+    if: github.event.action == 'opened' || github.event.action == 'synchronize'
+    runs-on: ubuntu-latest
+    env:
+      COMMIT_TITLE_REGEX: '^(build|chore|ci|docs|feat|fix|perf|refactor|revert|style|test|merge|init)\\([\\w\\/-]+\\)\\s\\b.{1,50}\\b(\\s#[0-9]{1,6})?$'
+      TITLE_FILE: 'ref_conventions_check/commit_titles'
+    steps:
+      - run: |
+          cd ${{ runner.temp }}
+          mkdir ref_conventions_check
+          git log --format=tformat:%s --no-decorate --no-color ${{ github.event.before }}..${{ github.event.pull_request.head.sha }} > "${TITLE_FILE}"
+          grep -oP "${COMMIT_TITLE_REGEX}" "${TITLE_FILE}" | diff - "${TITLE_FILE}"
+  branch_name:
+    name: 'Branch name convention'
+    if: github.event.action == 'opened' || github.event.action == 'synchronize'
+    runs-on: ubuntu-latest
+    env:
+      BRANCH_NAME_REGEX: '^[\\w\\/-]+$'
+    steps:
+      - run: |
+          echo ${{ github.ref_name }} | grep -oP "${BRANCH_NAME_REGEX}"
