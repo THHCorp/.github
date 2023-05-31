@@ -1,2 +1,3 @@
 # .github
-This repository stores the organization's README.md file.
+
+This repository stores the [@THHCorp](https://github.com/THHCorp) organization's GitHub setting and configuration files.
